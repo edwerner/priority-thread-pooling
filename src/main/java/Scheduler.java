@@ -53,10 +53,12 @@ public class Scheduler {
   private static void pollTasksFromQueue(Queue<Task> taskPriorityQueue)
       throws InterruptedException, ExecutionException {
     int counter = 0;
-    while (counter < taskPriorityQueue.size()) {
+    while (counter <= THREAD_COUNT) {
       Task task = taskPriorityQueue.poll();
+      if (task == null) {
+        break;
+      }
       executeTask(task.getId());
-      // System.out.println(taskPriorityQueue.size());
       counter++;
     }
   }
