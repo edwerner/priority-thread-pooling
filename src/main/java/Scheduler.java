@@ -1,7 +1,9 @@
 import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,6 +13,7 @@ public class Scheduler {
 
   final static int THREAD_COUNT = 10;
   private static ExecutorService executorService;
+  private static List<String> processList = new ArrayList<String>();
 
   public static void main(String[] args) throws InterruptedException, ExecutionException {
 
@@ -18,18 +21,31 @@ public class Scheduler {
 
     // natural ordering example of priority queue
     Queue<Integer> integerPriorityQueue = new PriorityQueue<>(THREAD_COUNT);
-    Random rand = new Random();
     for (int i = 0; i < THREAD_COUNT; i++) {
-      integerPriorityQueue.add(new Integer(rand.nextInt(100)));
+      integerPriorityQueue.add(randInt(0, 9));
     }
+    initializeProcessList();
     initializePriorityQueue();
+  }
+  
+  private static void initializeProcessList() {
+    processList.add("THERMOSTAT");
+    processList.add("WINDSHIELD_WIPERS");
+    processList.add("CRUISE_CONTROL");
+    processList.add("SEAT_BELT_SENSOR");
+    processList.add("GASOLINE_METER");
+    processList.add("RPM_METER");
+    processList.add("SPEEDOMETER");
+    processList.add("LANE_ASSIST");
+    processList.add("AUTO_BRAKE");
+    processList.add("OBSTACLE_DETECTION");
   }
 
   private static void initializePriorityQueue() throws InterruptedException, ExecutionException {
     // PriorityQueue example with Comparator
     Queue<Task> taskPriorityQueue = new PriorityQueue<>(THREAD_COUNT, idComparator);
     addTasksToQueue(taskPriorityQueue);
-    pollTasksFromQueue(taskPriorityQueue);    
+    pollTasksFromQueue(taskPriorityQueue);
   }
 
   // Comparator anonymous class implementation
@@ -43,9 +59,8 @@ public class Scheduler {
 
   // utility method to add random data to Queue
   private static void addTasksToQueue(Queue<Task> taskPriorityQueue) {
-    Random rand = new Random();
     for (int i = 0; i < THREAD_COUNT; i++) {
-      int id = rand.nextInt(100);
+      int id = randInt(0, 9);
       taskPriorityQueue.add(new Task(id, "Thread_ " + id));
     }
   }
@@ -64,12 +79,19 @@ public class Scheduler {
 
       if (counter == THREAD_COUNT) {
         initializePriorityQueue();
-      };
+      }
+      ;
     }
   }
 
+  public static int randInt(int min, int max) {
+    Random rand = new Random();
+    int randomNum = rand.nextInt((max - min) + 1) + min;
+    return randomNum;
+  }
+
   public static void executeTask(int id) throws InterruptedException, ExecutionException {
-    Future<String> future = executorService.submit(() -> "Thread executed with priority " + id);
+    Future<String> future = executorService.submit(() ->  processList.get(id) + " thread executed with priority " + id);
     String result = future.get();
     System.out.println(result);
     Thread.sleep(1000);
