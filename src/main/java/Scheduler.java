@@ -1,6 +1,4 @@
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
@@ -24,11 +22,14 @@ public class Scheduler {
     for (int i = 0; i < THREAD_COUNT; i++) {
       integerPriorityQueue.add(new Integer(rand.nextInt(100)));
     }
+    initializePriorityQueue();
+  }
 
+  private static void initializePriorityQueue() throws InterruptedException, ExecutionException {
     // PriorityQueue example with Comparator
     Queue<Task> taskPriorityQueue = new PriorityQueue<>(THREAD_COUNT, idComparator);
     addTasksToQueue(taskPriorityQueue);
-    pollTasksFromQueue(taskPriorityQueue);
+    pollTasksFromQueue(taskPriorityQueue);    
   }
 
   // Comparator anonymous class implementation
@@ -60,6 +61,10 @@ public class Scheduler {
       }
       executeTask(task.getId());
       counter++;
+
+      if (counter == THREAD_COUNT) {
+        initializePriorityQueue();
+      };
     }
   }
 
@@ -67,5 +72,6 @@ public class Scheduler {
     Future<String> future = executorService.submit(() -> "Thread executed with priority " + id);
     String result = future.get();
     System.out.println(result);
+    Thread.sleep(1000);
   }
 }
