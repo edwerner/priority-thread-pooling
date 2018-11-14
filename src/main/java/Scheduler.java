@@ -98,7 +98,7 @@ public class Scheduler {
   
   public static void executeTask() throws InterruptedException, ExecutionException {  
     for (TaskThread thread : taskList) {
-      executorService.submit(() -> );
+      executorService.submit(() -> thread.start());
     }
   }
 
