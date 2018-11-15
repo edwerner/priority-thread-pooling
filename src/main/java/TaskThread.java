@@ -8,7 +8,7 @@ public class TaskThread extends Thread{
     this.name = name;
     this.timeToComplete = timeToComplete;
     this.priority = priority;
-    Thread.currentThread().setPriority(priority);
+    this.setPriority(priority);
   }
   
   public void run() {
@@ -18,5 +18,5 @@ public class TaskThread extends Thread{
 	  }
       System.out.println("***************************" + name + " initialization completed.************************");
   }
-
+  
 }
